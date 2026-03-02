@@ -1,29 +1,25 @@
-import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
 import './globals.css'
-import Footer from '@/components/layout/Footer'
-import Navbar from '@/components/layout/Navbar'
-
-const inter = Inter({ subsets: ['latin'] })
-
+import AuthButton from '@/components/auth/AuthButton'
+import { Metadata } from 'next'
+import Link from 'next/link'
 export const metadata: Metadata = {
   title: 'Internship Platform - Get Hired by Companies',
   description: 'Post your skills, get hired by top companies',
 }
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className={inter.className}>
-        <div className="min-h-screen flex flex-col">
-          <Navbar />
-          <main className="grow">{children}</main>
-          <Footer />
-        </div>
+      <body>
+        <nav className="border-b">
+          <div className="container-custom py-4 flex justify-between items-center">
+            <Link href="/" className="text-xl font-bold text-blue-600">
+              InternHub
+            </Link>
+            <AuthButton />
+          </div>
+        </nav>
+        {children}
       </body>
     </html>
   )
