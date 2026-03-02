@@ -1,12 +1,13 @@
 import { createServerClient } from '@/lib/supabase/server'
 import { NextResponse } from 'next/server'
 
-// GET single post
+// GET single post - FIXED for Next.js 15+
 export async function GET(
   req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const supabase = await createServerClient()
+  const { id } = await params  // ⬅️ IMPORTANT: await params
   
   const { data: post, error } = await supabase
     .from('posts')
@@ -20,7 +21,7 @@ export async function GET(
         location
       )
     `)
-    .eq('id', params.id)
+    .eq('id', id)
     .single()
 
   if (error) {
@@ -30,12 +31,13 @@ export async function GET(
   return NextResponse.json({ post })
 }
 
-// UPDATE post
+// UPDATE post - FIXED for Next.js 15+
 export async function PUT(
   req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const supabase = await createServerClient()
+  const { id } = await params  // ⬅️ IMPORTANT: await params
   
   const { data: { user }, error: authError } = await supabase.auth.getUser()
   
@@ -48,8 +50,8 @@ export async function PUT(
   const { data, error } = await supabase
     .from('posts')
     .update(body)
-    .eq('id', params.id)
-    .eq('user_id', user.id) // Ensure user owns the post
+    .eq('id', id)
+    .eq('user_id', user.id)
     .select()
     .single()
 
@@ -60,12 +62,13 @@ export async function PUT(
   return NextResponse.json({ post: data })
 }
 
-// DELETE post
+// DELETE post - FIXED for Next.js 15+
 export async function DELETE(
   req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const supabase = await createServerClient()
+  const { id } = await params  // ⬅️ IMPORTANT: await params
   
   const { data: { user }, error: authError } = await supabase.auth.getUser()
   
@@ -76,7 +79,7 @@ export async function DELETE(
   const { error } = await supabase
     .from('posts')
     .delete()
-    .eq('id', params.id)
+    .eq('id', id)
     .eq('user_id', user.id)
 
   if (error) {
